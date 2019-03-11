@@ -96,14 +96,19 @@ this的指向不是固定的，会根据调用的不同，而指向不同的地�
   </script>
 ```
 >综上：this的指代和代码出现的位置无关，只和调用这个方法的对象有关。
->注意：在严格模式下（strict mode），全局对象将无法使用默认绑定，即执行会报undefined的错误
-function foo() { 
-    "use strict";
-   console.log( this.a );
-}
 
-var a = 2; 
-foo(); // Uncaught TypeError: Cannot read property 'a' of undefined
+注意：在严格模式下（strict mode），全局对象将无法使用默认绑定，即执行会报undefined的错误
+```
+    <script type="text/javascript">
+        function foo() { 
+            "use strict";
+        console.log( this.a );
+        }
+
+        var a = 2; 
+        foo(); // Uncaught TypeError: Cannot read property 'a' of undefined
+    </script>
+```
 ##### 1.2.3.2. 箭头函数中的this指向
 >箭头函数的this绑定$\color{red}{只取决于外层（函数或全局）}$的作用域
 ```

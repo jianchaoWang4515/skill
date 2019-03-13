@@ -21,7 +21,7 @@
 # 1. 目录
 ## 1.1. 前端必备
 ### 1.2. this指向总结
-this是在函数执行的过程中自动创建的一个指向一个对象的内部指针。确切的说，this并不是一个对象，而是指向一个已经存在的对象的指针，也可以认为是this就是存储了某个对象的地址。
+this是在函数执行的过程中自动创建的一个指向一个对象的内部指针。确切的说，`this并不是一个对象，而是指向一个已经存在的对象的指针`，也可以认为是this就是存储了某个对象的地址。
 this的指向不是固定的，会根据调用的不同，而指向不同的地方。
 #### 1.2.1. 预备知识
 ##### 1.2.1.1. this的绑定方式
@@ -97,7 +97,7 @@ this的指向不是固定的，会根据调用的不同，而指向不同的地�
 ```
 >综上：this的指代和代码出现的位置无关，只和调用这个方法的对象有关。
 
-注意：在严格模式下（strict mode），全局对象将无法使用默认绑定，即执行会报undefined的错误
+`注意：在严格模式下（strict mode），全局对象将无法使用默认绑定，即执行会报undefined的错误`
 ```
     <script type="text/javascript">
         function foo() { 
@@ -110,7 +110,7 @@ this的指向不是固定的，会根据调用的不同，而指向不同的地�
     </script>
 ```
 ##### 1.2.3.2. 箭头函数中的this指向
->箭头函数的this绑定$\color{red}{只取决于外层（函数或全局）}$的作用域
+>箭头函数的this绑定只取决于`外层函数或全局`的作用域
 ```
 <script>
 var name = 'zhangsan'
@@ -154,7 +154,7 @@ a.b.cbk2(); // wangwu
 #### 1.2.4. 改变this指向-显示绑定
 在JavaScript中，允许更改this的指向。
 通过call方法或apply方法
-函数A可以成为指定任意对象的方法进行调用 。函数A就是函数对象，每个函数对象中都有一个方法call，通过call可以让你指定的对象去调用这个函数A。
+函数A可以成为指定任意对象的方法进行调用 。函数A就是函数对象，每个函数对象中都有一个方法call，`通过call可以让你指定的对象去调用这个函数A`。
 ECMAScript 规范给所有函数都定义了call与 apply 两个方法。
 call和apply是放在Function的原型对象上的，而不是Object原型对象上！
 ```
@@ -172,13 +172,13 @@ call和apply是放在Function的原型对象上的，而不是Object原型对象
 
 ```
 ##### 1.2.4.1. call和apply和bind的详解
-在this的指向中有第三个方向就是通过call/apply去改变this的指向，这个JavaScript中一个独特的使用形式，其他语言并没有。那么，我们就在这里顺带讲一下call 、apply 以及bind的用法。
+在this的指向中有第三个方向就是通过call/apply去改变this的指向，这个JavaScript中一个独特的使用形式，其他语言并没有。
 ##### 1.2.4.2. apply和call的区别
-ECMAScript 规范给所有函数都定义了 call与apply 两个方法，它们的应用非常广泛，它们的作用也是一模一样，只是传参的形式有区别而已。
+ECMAScript 规范给所有函数都定义了 call与apply 两个方法，它们的应用非常广泛，它们的`作用也是一模一样，只是传参的形式有区别而已`。
 简单来说，假设有一个函数A，我们调用函数A会直接去A()，那么如果是A()这样直接调用的话，函数体A里面的this就是window了。而我们可以通过call（或apply）去调用，比如：A.call().这样子调用就可以指定A中的this到底是哪个对象。
-用call来做比对，里面有两个参数，参数一就是重新指定其中的this是谁，参数2是属性名。而事实上，call与apply也就是参数二的不同这个差异。
+用call来做比对，里面有两个参数，参数一就是重新指定其中的this是谁，`参数2是属性名`。而事实上，`call与apply也就是参数二的不同这个差异`。
 apply
-apply 方法传入两个参数：一个是作为函数上下文的对象，简单来说，重新指定函数中的this是谁。另外一个是作为函数参数所组成的数组，是传入一个数组。
+apply 方法传入两个参数：一个是作为函数上下文的对象，简单来说，重新指定函数中的this是谁。另外一个是作为函数参数所组成的数组，`是传入一个数组`。
 ```
 var obj = {
     name : 'ya LV'
@@ -261,26 +261,33 @@ let max = Math.max.apply(null, arr);
       console.log(this.name);
     }
     
-    //将func的代码拷贝一份，并且永远改变其拷贝出来的函数中的this，为bind第一个参数所指向的对象。把这     份永远改变着this指向的函数返回给func1.
-    var func1 = func.bind(obj);
-   //bind方法不会立即执行，是返回一个改变上下文this的函数，要对这个函数调用才会执行。
-    func1();  //wjc
-   //可以看到，现在这份改变this之后拷贝过来的函数，this的指向永远是bind（）绑定的那个，不管之后去call    重新指向对象，func1 都不会改变this的指向。永远！可知，bind比call优先级还高。
-    func1.call({name:'CALL'});   //wjc
+```
+将func的代码拷贝一份，并且永远改变其拷贝出来的函数中的this，为bind第一个参数所指向的对象。把这     份永远改变着this指向的函数返回给func1.
+```  var func1 = func.bind(obj);```
+   `bind方法不会立即执行，是返回一个改变上下文this的函数，要对这个函数调用才会执行`。
+```    func1();  //wjc```
+   可以看到，现在这份改变this之后拷贝过来的函数，this的指向永远是bind（）绑定的那个，`不管之后去call重新指向对象，func1都不会改变this的指向。永远！可知，bind比call优先级还高。`
+```func1.call({name:'CALL'});   //wjc```
 
-    //又从func重新拷贝一份永远改变this指向对象为{name:'LI SI'}这个对象的函数，返回给func2.
-    var func2 = func.bind({name:'LI SI'});
-    func2();   //LI SI
+又从func重新拷贝一份永远改变this指向对象为{name:'LI SI'}这个对象的函数，返回给func2.
+```    
+var func2 = func.bind({name:'LI SI'});
+func2();   //LI SI
+```
+注意，`这里是拷贝一份func2(而不是func)的代码`，而func2之前已经绑定过去永远改变this的指向了，所以这里并不去改变！`还是会输出原来的最先bind的this指向对象。`
+```    
+var func3 = func2.bind({name:'ZHANG SAN'});
+func3();   //LI SI
+```
 
-   //注意，这里是拷贝一份func2(而不是func)的代码，而func2之前已经绑定过去永远改变this的指向了，所以这   里并不去改变！还是会输出原来的最先bind的this指向对象。
-    var func3 = func2.bind({name:'ZHANG SAN'});
-    func3();   //LI SI
-
-   //上面对func最初的函数进行了多次绑定，绑定后原函数 func 中的 this 并没有被改变，依旧指向全局对象      window。因为绑定bind的过程是拷贝代码的一个过程，而不是在其自身上修改。window.name = HELLO
-    func();   //HELLO
+上面对func最初的函数进行了多次绑定，绑定后原函数 func 中的 this 并没有被改变，`依旧指向全局对象window。`因为绑定bind的过程是拷贝代码的一个过程，而不是在其自身上修改。
+``` 
+window.name = HELLO
+func();   //HELLO
 
 ```
 bind 方法不会立即执行，而是返回一个改变了上下文this后的函数。而原函数func中的 this并没有被改变，依旧指向全局对象 window。
+
 - 参数的使用
 ```
  function func(a, b, c) {
@@ -294,20 +301,20 @@ bind 方法不会立即执行，而是返回一个改变了上下文this后的�
   func.call(null, 'wjc');       // wjc undefined undefined
 
 ```
-call 是把第二个及以后的参数作为 func方法的实参传进去，而 func1方法的实参实则是在bind中参数的基础上再往后排。也就是说，var func1 = func.bind(null,'yaLV');  bind现有两个参数，第一个是指向，第二个实参是'yaLV'，那么就是先让func中的a='yaLV',然后没排满就是让func1('A', 'B', 'C'); 这个参数依次排，现在b='A'，c='B' , 形参已经排完了。也就是输出yaLV A B。。
+call 是把第二个及以后的参数作为 func方法的实参传进去，而 func1方法的实参实则是在`bind中参数的基础上再往后排`。也就是说，var func1 = func.bind(null,'yaLV');  bind现有两个参数，第一个是指向，`第二个实参是'yaLV'`，那么就是先让func中的a='yaLV',然后没排满就是让func1('A', 'B', 'C'); 这个参数依次排，现在b='A'，c='B' , 形参已经排完了。也就是输出yaLV A B。。
 
 - 实现原理
 ```
 if (!Function.prototype.bind) {
    Function.prototype.bind = function () {
-       var self = this,                        // 保存原函数
-       context = [].shift.call(arguments), // 保存需要绑定的this上下文
-       args = [].slice.call(arguments);    // 剩余的参数转为数组
-       return function () {                    // 返回一个新函数
-       self.apply(context[].concat.call(args[].slice.call(arguments));
-              }
-          }
-      }
+     var self = this,                        // 保存原函数
+     context = [].shift.call(arguments),//保存需要绑定的this上下文
+     args = [].slice.call(arguments);    // 剩余的参数转为数组
+     return function () {                    // 返回一个新函数
+     self.apply(context[].concat.call(args[].slice.call(arguments));
+     }
+    }
+}
 
 ```
 

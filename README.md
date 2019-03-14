@@ -16,6 +16,11 @@
                 - [1.1.1.4.2 apply和call的区别](#11142-apply和call的区别)
                 - [1.1.1.4.3 apply和call的用法](#11143-apply和call的用法)
                 - [1.1.1.4.4 call和bind的区别](#11144-call和bind的区别)
+        - [1.1.2 原型与原型链](#112-原型与原型链)
+            - [1.1.2.1 prototype与\_proto_ 与constructor](#1121-prototype与proto与constructor)
+            - [1.1.2.2 实例与原型](#1122-实例与原型)
+            - [1.1.2.3 继承](#1123-继承)
+            - [1.1.2.4 instanceof](#1124-instanceof)
     - [1.2 拓展](#12-拓展)
         - [1.2.1 IIFE](#121-iife)
         - [1.2.2 BFC](#122-bfc)
@@ -320,7 +325,178 @@ if (!Function.prototype.bind) {
 }
 
 ```
+### 1.1.2. 原型与原型链
+#### 1.1.2.1. prototype与\_proto_与constructor
+- prototype
+任何的函数都有一个属性prototype，这个属性的值是一个对象，这个对象就称为这个函数的原型对象。
+```
+function Person() {
 
+}
+// prototype是函数才有的属性
+Person.prototype.name = 'wjc';
+
+var person1 = new Person();  //person1是Person构造函数的实例
+var person2 = new Person();  //person2是Person构造函数的实例
+console.log(person1.name) // wjc
+console.log(person2.name) // wjc
+
+```
+>我们创建的每一个对象都会继承另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型”继承”属性。
+
+- \_proto_
+当使用构造函数创建对象的时候, 新创建的对象会有一个属性\_proto_,这个属性会指向该对象的原型。
+```
+function Person() {
+    
+}
+var person1 = new Person();// 具体可查看本章new三步走文章
+console.log(person1.__proto__ === Person.prototype); //true
+
+```
+>我们在开发时创建的对象都是通过 new Object()来创建的
+```
+var obj = {} // 其实是执行了 new Object();
+var arr = [] // 其实是执行了 new Array(),Array的原型又继承了Object
+```
+- constructor
+每个原型都有一个constructor属性指向关联的构造函数。注意是构造函数本身，而不是实例。
+```
+function Person() {
+
+}
+console.log(Person === Person.prototype.constructor); //true
+
+```
+![关系](https://user-gold-cdn.xitu.io/2019/2/22/1691328a8c90abf7?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+综上可以得出
+```
+function Person() {
+
+}
+var person1 = new Person();
+//对象的__proto__属性: 创建对象时自动添加的, 默认值为构造函数的prototype属性值（很重要）
+console.log(person1.__proto__ == Person.prototype) // true
+console.log(Person.prototype.constructor == Person) // true
+
+// 顺便学习一个ES5的方法,可以获得对象的原型
+console.log(Object.getPrototypeOf(person1) === Person.prototype) //true
+
+```
+#### 1.1.2.2. 实例与原型
+当读取实例的属性时，如果找不到，就会查找与对象关联的原型中的属性，如果还查不到，就去找原型的原型，一直找到最顶层为止。
+例：
+```
+function Person() {
+
+}
+//往Person对象原型中添加一个属性
+Person.prototype.name = 'name';
+//创建一个person1实例对象
+var person1 = new Person();
+//给创建的实例对象person1添加一个属性
+person1.name = 'name of this person1';
+//查找person1.name，因为本身实例对象有，那么就找到了自身实例对象上的属性和属性值
+console.log(person1.name) // name of this person1
+//删除实例对象的属性和属性值
+delete person1.name;
+//查找属性name，在实例对象自身上找不到，通过proto指向往原型链上找，在原型对象中找到
+console.log(person1.name) // name
+
+```
+>实例对象的proto指向构造函数的prototype。也就是说，Person.prototype这个原型对象（实例原型）是通过Object这个构造函数new出来的，也就是Person.prototype这个原型对象是Object的实例，所以这个实例会有proto属性指向Object构造函数的原型对象Object.prototype。
+
+![关系](https://user-gold-cdn.xitu.io/2019/2/22/1691328a8ca680e6?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+`那Object.prototype的原型呢？null，嗯，就是null。所以查到Object.prototype就可以停止查找了。`
+
+- 原型链
+![关系](https://user-gold-cdn.xitu.io/2019/2/22/1691328aac644da7?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+>图中由相互关联的原型组成的链状结构就是原型链，也就是蓝色的这条线，都是通过proto属性进行查找的，因为proto指向构造函数本身。
+#### 1.1.2.3. 继承
+例：
+```
+// 创建一个基类
+function Animal(name) {
+    this.name = name;
+}
+Animal.prototype.eat = function(food) {
+    console.log(this.name + '正在吃：' + food);
+}
+//创建一个派生类
+function cat(name) {
+    Animal.call(this, name); //利用call实现私有属性继承
+}
+cat.prototype = Object.create(Animal.prototype); // Object.create() 浅拷贝 可以防止基类方法被重写
+cat.prototype.constructor = cat; //constructor指向
+cat.prototype.eat = function() {
+    console.log(2222)
+}
+let test = new cat('猫');
+test.eat('鱼')
+```
+#### 1.1.2.4. instanceof
+例如：A instanceof B
+>如果A实例原型链上有构造函数B的原型则返回true
+例1:
+```
+  //一个构造函数Foo
+  function Foo() {  }
+  //一个f1实例对象
+  var f1 = new Foo()
+  //翻译:f1是Foo的实例对象吗？
+  //还记得我说过，一个实例对象通过proto指向其构造函数的原型对象上。
+  //深入翻译：f1这个实例对象通过proto指向是否可以找到Foo.prototype上呢？
+  console.log(f1 instanceof Foo) // true
+  //这行代码可以得出，沿着proto只找了一层就找到了。
+  console.log(f1.__proto__ === Foo.prototype);   // true
+  
+  //翻译：f1是Object的实例对象吗？
+  //深入翻译：f1这个实例对象通过proto指向是否可以找到Object.prototype上呢？
+  console.log(f1 instanceof Object) // true
+  //这两行代码可以得出，沿着proto找了两层才找到。事实上，f1.__proto__找到了Foo.prototype（Foo构造函数原型上），再次去.__proto__，找到了Object的原型对象上。见下图。
+  console.log(f1.__proto__ === Object.prototype);  // false
+  console.log(f1.__proto__.__proto__ === Object.prototype);  // true
+
+```
+例2:
+```
+//这个案例的实质还是那句话：一个实例对象通过proto属性指向其构造函数的原型对象上。
+//翻译：实例对象Object是否可以通过proto属性（沿着原型链）找到Function.prototype（Function的原型对象）
+  console.log(Object instanceof Function) // true
+//以上结果的输出可以看到下图，Object.__proto__直接找到一层就是Function.prototype.（Object created by Function）可知Object构造函数是由Function创建出来的，也就是说，Object这个实例是new Function出来的。
+
+  console.log(Object instanceof Object) // true
+//很有意思。上面我们已经知道Object这个实例是new Function出来的。也就是Object.proto指向Function.prototype。有意思的是，Function的原型对象又是Object原型对象的一个实例，也就是Function.prototype.proto 指向  Object.prototype .很有意思吧，见下图很更清楚这个“走向”。
+
+
+  console.log(Function instanceof Function) // true
+//由这个可知，可以验证我们的结论：Function是通过new自己产生的实例。                                   	 Function.proto===Function.prototype
+
+  console.log(Function instanceof Object) // true
+//Function.proto.proto===Function.prototype (找了两层)
+
+  //定义了一个Foo构造函数。由下图可知，Foo.proto.proto.proto===null  
+  function Foo() {}
+  console.log(Object instanceof  Foo) // false
+//这条语句要验证的是，Object是否可以通过其原型链找到Foo.prototype。
+// Object.proto.proto.proto=null  并不会找到Foo.prototype。所以，返回FALSE。
+
+```
+
+- 所有函数都有一个特别的属性:
+    - prototype : 显式原型属性
+- 所有实例对象都有一个特别的属性:
+    - __proto__ : 隐式原型属性
+- 显式原型与隐式原型的关系
+    - 函数的prototype: 定义函数时被自动赋值, 值默认为{},                    即用为原型对象
+    - 实例对象的__proto__: 在创建实例对象时被自动添加,                    并赋值为构造函数的prototype值
+    - 原型对象即为当前实例对象的父对象
+- 原型链
+    - 所有的实例对象都有__proto__属性, 它指向的就是原型对象
+    - 这样通过__proto__属性就形成了一个链的结构---->原型链
+    - 当查找对象内部的属性/方法时, js引擎自动沿着这个原型链查找
+    - 当给对象属性赋值时不会使用原型链, 而只是在当前对象中进行操作
 ## 1.2. 拓展
 ### 1.2.1. IIFE
 ### 1.2.2. BFC

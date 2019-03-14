@@ -17,7 +17,7 @@
                 - [1.1.1.4.3 apply和call的用法](#11143-apply和call的用法)
                 - [1.1.1.4.4 call和bind的区别](#11144-call和bind的区别)
         - [1.1.2 原型与原型链](#112-原型与原型链)
-            - [1.1.2.1 prototype与\_proto_ 与constructor](#1121-prototype与proto与constructor)
+            - [1.1.2.1 prototype与proto 与constructor](#1121-prototype与proto与constructor)
             - [1.1.2.2 实例与原型](#1122-实例与原型)
             - [1.1.2.3 继承](#1123-继承)
             - [1.1.2.4 instanceof](#1124-instanceof)
@@ -326,7 +326,7 @@ if (!Function.prototype.bind) {
 
 ```
 ### 1.1.2. 原型与原型链
-#### 1.1.2.1. prototype与\_proto_与constructor
+#### 1.1.2.1. prototype与proto与constructor
 - prototype
 任何的函数都有一个属性prototype，这个属性的值是一个对象，这个对象就称为这个函数的原型对象。
 ```
@@ -344,8 +344,8 @@ console.log(person2.name) // wjc
 ```
 >我们创建的每一个对象都会继承另一个对象，这个对象就是我们所说的原型，每一个对象都会从原型”继承”属性。
 
-- \_proto_
-当使用构造函数创建对象的时候, 新创建的对象会有一个属性\_proto_,这个属性会指向该对象的原型。
+- __proto__
+当使用构造函数创建对象的时候, 新创建的对象会有一个属性__proto__,这个属性会指向该对象的原型。
 ```
 function Person() {
     

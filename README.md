@@ -474,7 +474,7 @@ test.eat('鱼')
 //由这个可知，可以验证我们的结论：Function是通过new自己产生的实例。                                   	 Function.proto===Function.prototype
 
   console.log(Function instanceof Object) // true
-//Function.proto.proto===Function.prototype (找了两层)
+//Function.proto.proto===Object.prototype (找了两层)
 
   //定义了一个Foo构造函数。由下图可知，Foo.proto.proto.proto===null  
   function Foo() {}
